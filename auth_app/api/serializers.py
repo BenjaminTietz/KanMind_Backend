@@ -6,13 +6,14 @@ User = get_user_model()
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
+    fullname = serializers.CharField(source="full_name")
     repeated_password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
         fields = [
             "id",
-            "full_name",
+            "fullname",
             "email",
             "password",
             "repeated_password",
