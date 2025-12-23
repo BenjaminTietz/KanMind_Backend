@@ -1,5 +1,7 @@
 from django.db.models import Count, Q
 from kanban_app.models import Board
+from auth_app.models import CustomUser
+from django.db import transaction
 
 def get_board_queryset_for_user(user):
     return (
@@ -21,3 +23,25 @@ def get_board_queryset_for_user(user):
             ),
         )
     )
+
+@transaction.atomic
+def create_board(owner, title, member_ids=None):
+    board = Board.objects.create(
+        title=title,
+        owner=owner,
+    )
+
+    members = []
+
+    if member_ids:
+        members = list(CustomUser.objects.filter(id__in=member_ids))
+
+    # Owner darf optional Member sein – aber nicht doppelt
+    if owner not in members:
+        members.append(owner)
+
+    board.members.set(members)
+    board.member_count = len(members)
+    board.save()
+
+    return board
