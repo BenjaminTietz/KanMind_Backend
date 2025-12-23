@@ -2,16 +2,16 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
-
-from .serializers import BoardListSerializer, BoardCreateSerializer
+from kanban_app.api.permissions import IsBoardMemberOrOwner
+from .serializers import BoardListSerializer, BoardCreateSerializer, BoardDetailSerializer
 from .services.board_service import (
     get_board_queryset_for_user,
-    create_board,
+    get_board_detail_for_user,  
 )
 
 
 class BoardViewSet(ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsBoardMemberOrOwner]
 
     def get_queryset(self):
         return get_board_queryset_for_user(self.request.user)
@@ -33,3 +33,8 @@ class BoardViewSet(ModelViewSet):
 
         response_serializer = BoardListSerializer(board)
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+    
+    def retrieve(self, request, pk=None):
+        board = get_board_detail_for_user(pk, request.user)
+        serializer = BoardDetailSerializer(board)
+        return Response(serializer.data)

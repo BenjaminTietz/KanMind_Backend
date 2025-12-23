@@ -23,7 +23,18 @@ def get_board_queryset_for_user(user):
             ),
         )
     )
-
+    
+def get_board_detail_for_user(board_id, user):
+    return (
+        Board.objects
+        .prefetch_related(
+            "members",
+            "tasks__assignee",
+            "tasks__reviewer",
+        )
+        .get(id=board_id)
+    )
+    
 @transaction.atomic
 def create_board(owner, title, member_ids=None):
     board = Board.objects.create(
