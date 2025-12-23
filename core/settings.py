@@ -52,13 +52,12 @@ INSTALLED_APPS = [
     'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
+    'rest_framework',
     'rest_framework.authtoken',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
-    'rest_framework',
 
     'auth_app',
     'kanban_app',
@@ -138,7 +137,14 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = "auth_app.CustomUser"
 
-
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
